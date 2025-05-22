@@ -14,40 +14,43 @@
         <!-- Barra lateral -->
         <aside class="sidebar">
             <div class="logo">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#7B68EE"/>
-                </svg>
+                <i class="fas fa-check-square"></i>
                 <h1>TaskFlow</h1>
             </div>
             
             <nav class="nav-menu">
                 <a href="#" class="nav-item active">
-                    <i class="bi bi-check2-square"></i>
+                    <i class="fas fa-tasks"></i>
                     <span>Tarefas</span>
                 </a>
                 <a href="calendario.html" class="nav-item">
-                    <i class="bi bi-calendar3"></i>
+                    <i class="far fa-calendar-alt"></i>
                     <span>Calendário</span>
                 </a>
-                <a href="#" class="nav-item">
-                    <i class="bi bi-bar-chart"></i>
-                    <span>Relatórios</span>
+                <a href="#" class="nav-item" id="estatisticas-link">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Estatísticas</span>
                 </a>
             </nav>
             
             <div class="user-info">
-                <div class="user-avatar">
-                    <i class="bi bi-person-circle"></i>
+                <div id="user-avatar" class="user-avatar">
+                    <i class="fas fa-user"></i>
                 </div>
                 <div class="user-details">
-                    <span class="user-name" id="user-name">Carregando...</span>
-                    <span class="user-email" id="user-email">...</span>
+                    <span id="username" class="user-name">Carregando...</span>
+                    <span id="useremail" class="user-email">Carregando...</span>
                 </div>
                 <button id="logout-btn" class="logout-btn">
-                    <i class="bi bi-box-arrow-right"></i>
+                    <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
         </aside>
+        
+        <!-- Botão do menu móvel -->
+        <button id="mobile-menu-toggle" class="hidden">
+            <i class="fas fa-bars"></i>
+        </button>
         
         <!-- Conteúdo principal -->
         <main class="main-content">
@@ -255,5 +258,40 @@
     <script src="ui.js"></script>
     <script src="fix-modal.js"></script>
     <script src="calendario.js"></script>
+
+    <script>
+        // Script para o menu móvel
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            
+            // Mostrar o botão do menu apenas em telas pequenas
+            function checkScreenSize() {
+                if (window.innerWidth <= 768) {
+                    mobileMenuToggle.classList.remove('hidden');
+                } else {
+                    mobileMenuToggle.classList.add('hidden');
+                    sidebar.classList.remove('show');
+                }
+            }
+            
+            // Verificar no carregamento e no redimensionamento
+            checkScreenSize();
+            window.addEventListener('resize', checkScreenSize);
+            
+            // Alternar menu ao clicar no botão
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+            
+            // Fechar menu ao clicar no conteúdo principal
+            mainContent.addEventListener('click', function() {
+                if (sidebar.classList.contains('show') && window.innerWidth <= 768) {
+                    sidebar.classList.remove('show');
+                }
+            });
+        });
+    </script>
 </body>
 </html> 

@@ -14,6 +14,8 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow-y: auto;
+    z-index: 100;
 }
 
 .sidebar .logo {
@@ -524,18 +526,127 @@
 }
 
 /* Responsividade */
+@media (max-width: 992px) {
+    .app-container {
+        grid-template-columns: 220px 1fr;
+    }
+    
+    .form-row {
+        flex-wrap: wrap;
+    }
+    
+    .form-row .form-group {
+        flex: 0 0 100%;
+    }
+    
+    .filters-bar {
+        flex-direction: column;
+        padding: 12px 15px;
+        gap: 15px;
+    }
+    
+    .filter-group {
+        width: 100%;
+    }
+    
+    .tasks-table {
+        min-width: 800px;
+    }
+    
+    .tasks-table-container {
+        overflow-x: auto;
+    }
+}
+
 @media (max-width: 768px) {
     .app-container {
         grid-template-columns: 1fr;
+        position: relative;
     }
     
     .sidebar {
-        display: none;
+        position: fixed;
+        left: -250px;
+        top: 0;
+        width: 250px;
+        transition: left 0.3s ease;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .sidebar.show {
+        left: 0;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+    
+    .task-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .search-bar {
+        width: 100%;
     }
     
     .form-row {
         flex-direction: column;
         gap: 20px;
+    }
+    
+    #mobile-menu-toggle {
+        display: block;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 101;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+}
+
+@media (max-width: 576px) {
+    .main-content {
+        padding: 10px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: 15px;
+    }
+    
+    .filter-buttons {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+    
+    .filter-buttons .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .tasks-table th:nth-child(3),
+    .tasks-table td:nth-child(3),
+    .tasks-table th:nth-child(4),
+    .tasks-table td:nth-child(4) {
+        display: none;
     }
 }
 
