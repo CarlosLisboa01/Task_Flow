@@ -344,8 +344,8 @@ function renderTasks(tasks) {
         if (a.status === 'Concluído' && b.status !== 'Concluído') return 1;
         if (a.status !== 'Concluído' && b.status === 'Concluído') return -1;
         
-        // Depois por data
-        return new Date(a.data_limite) - new Date(b.data_limite);
+        // Depois por data (comparando as strings diretamente)
+        return a.data_limite.localeCompare(b.data_limite);
     });
     
     // Renderizar cada tarefa
@@ -361,7 +361,8 @@ function renderTasks(tasks) {
         // Verificar se a tarefa está atrasada
         const hoje = new Date();
         hoje.setHours(0, 0, 0, 0);
-        const dataLimite = new Date(task.data_limite);
+        const [ano, mes, dia] = task.data_limite.split('-').map(Number);
+        const dataLimite = new Date(ano, mes - 1, dia);
         dataLimite.setHours(0, 0, 0, 0);
         const isAtrasada = (dataLimite < hoje && task.status !== 'Concluído');
         
@@ -369,8 +370,9 @@ function renderTasks(tasks) {
             row.classList.add('task-overdue');
         }
         
-        const dueDate = new Date(task.data_limite);
-        const formattedDate = dueDate.toLocaleDateString('pt-BR');
+        // Formatar a data para exibição (DD/MM/YYYY)
+        const [anoLimite, mesLimite, diaLimite] = task.data_limite.split('-');
+        const formattedDate = `${diaLimite}/${mesLimite}/${anoLimite}`;
         
         // Determinar classes de status e prioridade
         const statusClass = getStatusClass(task.status);
@@ -581,17 +583,14 @@ function closeTaskModal() {
 async function handleTaskFormSubmit(e) {
     e.preventDefault();
     
-    // Prevenir múltiplas submissões
     if (isSubmitting) {
         console.log('Já existe uma submissão em andamento, ignorando clique adicional');
         return;
     }
     
-    // Marcar como em submissão
     isSubmitting = true;
     console.log('Iniciando submissão do formulário de tarefa');
     
-    // Mostrar feedback visual durante o salvamento
     const submitBtn = taskForm.querySelector('button[type="submit"]');
     if (submitBtn) {
         submitBtn.disabled = true;
@@ -613,11 +612,15 @@ async function handleTaskFormSubmit(e) {
             isSubmitting = false;
             return;
         }
+
+        // Pegar a data exatamente como foi inserida
+        const dataLimite = document.getElementById('task-due-date').value;
+        console.log('Data limite inserida:', dataLimite);
         
         const taskData = {
             nome_da_tarefa: taskName,
             status: document.getElementById('task-status').value,
-            data_limite: document.getElementById('task-due-date').value,
+            data_limite: dataLimite,
             prioridade: document.getElementById('task-priority').value,
             tipo_de_tarefa: document.getElementById('task-type').value,
             descricao: document.getElementById('task-description').value.trim(),

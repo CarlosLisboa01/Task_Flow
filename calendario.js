@@ -373,43 +373,27 @@ function getTasksForDate(date) {
     }
     
     try {
-        // Formatação consistente de datas para comparação
-        const dateObj = new Date(date);
-        dateObj.setHours(0, 0, 0, 0);
-        const dateString = dateObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+        // Formatar a data no mesmo formato que é salvo (YYYY-MM-DD)
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const dateString = `${year}-${month}-${day}`;
         
-        console.log(`Buscando tarefas para a data: ${dateString}, total de tarefas disponíveis: ${calendarTasks.length}`);
+        console.log(`Buscando tarefas para a data: ${dateString}`);
         
         // Filtrar as tarefas pela data
         const tasksForDate = calendarTasks.filter(task => {
             if (!task.data_limite) return false;
             
-            let taskDate;
-            try {
-                // Tratar diferentes formatos possíveis da data limite
-                if (typeof task.data_limite === 'string') {
-                    if (task.data_limite.includes('T')) {
-                        taskDate = task.data_limite.split('T')[0]; // Formato ISO
-                    } else {
-                        taskDate = task.data_limite; // Já está no formato YYYY-MM-DD
-                    }
-                } else {
-                    // Se for um objeto Date, convertê-lo para string
-                    taskDate = new Date(task.data_limite).toISOString().split('T')[0];
-                }
-                
-                const matches = taskDate === dateString;
-                if (matches) {
-                    console.log(`Tarefa encontrada para ${dateString}: ${task.nome_da_tarefa} (${task.id})`);
-                }
-                return matches;
-            } catch (err) {
-                console.error(`Erro ao processar data da tarefa: ${task.id}`, err);
-                return false;
+            // Comparar as datas diretamente como strings
+            const matches = task.data_limite === dateString;
+            
+            if (matches) {
+                console.log(`Tarefa encontrada: ${task.nome_da_tarefa}, data limite: ${task.data_limite}`);
             }
+            return matches;
         });
         
-        console.log(`Encontradas ${tasksForDate.length} tarefas para a data ${dateString}`);
         return tasksForDate;
     } catch (error) {
         console.error('Erro ao buscar tarefas para a data:', error);
