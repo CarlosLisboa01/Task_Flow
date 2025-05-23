@@ -50,11 +50,6 @@
             </div>
         </aside>
         
-        <!-- Botão do menu móvel -->
-        <button id="mobile-menu-toggle" class="hidden">
-            <i class="fas fa-bars"></i>
-        </button>
-        
         <!-- Conteúdo principal -->
         <main class="main-content">
             <header class="task-header">
@@ -218,40 +213,5 @@
     <script src="calendario.js"></script>
     <script src="ui.js"></script>
     <script src="fix-modal.js"></script>
-    
-    <script>
-        // Script para o menu móvel
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-            const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('.main-content');
-            
-            // Mostrar o botão do menu apenas em telas pequenas
-            function checkScreenSize() {
-                if (window.innerWidth <= 768) {
-                    mobileMenuToggle.classList.remove('hidden');
-                } else {
-                    mobileMenuToggle.classList.add('hidden');
-                    sidebar.classList.remove('show');
-                }
-            }
-            
-            // Verificar no carregamento e no redimensionamento
-            checkScreenSize();
-            window.addEventListener('resize', checkScreenSize);
-            
-            // Alternar menu ao clicar no botão
-            mobileMenuToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('show');
-            });
-            
-            // Fechar menu ao clicar no conteúdo principal
-            mainContent.addEventListener('click', function() {
-                if (sidebar.classList.contains('show') && window.innerWidth <= 768) {
-                    sidebar.classList.remove('show');
-                }
-            });
-        });
-    </script>
 </body>
 </html> 

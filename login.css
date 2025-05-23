@@ -4,7 +4,6 @@
     align-items: center;
     height: 100vh;
     padding: 20px;
-    background-color: var(--background-alt);
 }
 
 .login-card {
@@ -122,44 +121,4 @@ form button {
 
 .register-link a:hover, .login-link a:hover {
     text-decoration: underline;
-}
-
-/* Responsividade */
-@media (max-width: 576px) {
-    .container {
-        padding: 15px;
-    }
-    
-    .login-card {
-        padding: 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    
-    .logo h1 {
-        font-size: 24px;
-    }
-    
-    .tab-link {
-        padding: 8px 12px;
-        font-size: 0.95rem;
-    }
-    
-    .page-title h2 {
-        font-size: 1.3rem;
-    }
-    
-    .form-group input {
-        padding: 8px 10px;
-    }
-}
-
-@media (max-height: 600px) {
-    .container {
-        align-items: flex-start;
-        padding-top: 40px;
-    }
-    
-    .login-card {
-        margin-bottom: 20px;
-    }
 } 
