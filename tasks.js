@@ -579,6 +579,12 @@ function closeTaskModal() {
     taskModal.classList.remove('active');
 }
 
+// Após qualquer operação que modifique as tarefas (criar, editar, excluir)
+function notificarAlteracaoTarefas() {
+    // Disparar evento customizado
+    document.dispatchEvent(new Event('tasksUpdated'));
+}
+
 // Manipular envio do formulário de tarefa
 async function handleTaskFormSubmit(e) {
     e.preventDefault();
@@ -677,13 +683,16 @@ async function handleTaskFormSubmit(e) {
             return;
         }
         
-        // Fechar modal antes de atualizar lista para evitar problema de reentrada
+        // Fechar modal antes de atualizar lista
         console.log('Salvamento bem-sucedido, fechando modal');
         closeTaskModal();
         
         // Atualizar lista de tarefas
         console.log('Atualizando lista de tarefas');
         await fetchTasks();
+        
+        // Notificar alteração
+        notificarAlteracaoTarefas();
         
         // Atualizar o calendário se estiver disponível
         if (typeof window.fetchTasksForCalendar === 'function' && typeof window.renderCalendar === 'function') {
@@ -768,6 +777,9 @@ async function handleDeleteTaskById(taskId) {
         
         // Atualizar lista de tarefas
         await fetchTasks();
+        
+        // Notificar alteração
+        notificarAlteracaoTarefas();
         
         // Atualizar o calendário se estiver disponível
         if (typeof window.fetchTasksForCalendar === 'function' && typeof window.renderCalendar === 'function') {
