@@ -284,6 +284,12 @@
     z-index: 10;
 }
 
+/* Centralizar cabeçalhos específicos */
+.tasks-table th.col-status,
+.tasks-table th.col-priority {
+    text-align: center;
+}
+
 .tasks-table tbody tr {
     border-bottom: 1px solid var(--border);
     transition: background-color 0.2s;
@@ -296,6 +302,12 @@
 .tasks-table td {
     padding: 12px 16px;
     color: var(--text);
+}
+
+/* Centralizar células específicas */
+.tasks-table th.col-status,
+.tasks-table th.col-priority {
+    text-align: center;
 }
 
 .col-check {

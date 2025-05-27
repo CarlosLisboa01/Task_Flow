@@ -190,6 +190,13 @@ async function fetchTasksForCalendar() {
     }
 }
 
+// Função para normalizar o texto (remover acentos e converter para minúsculo)
+function normalizePrioridade(prioridade) {
+    return prioridade.toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+}
+
 // Renderizar o calendário
 function renderCalendar() {
     try {
@@ -281,11 +288,7 @@ function renderCalendar() {
             const dayDate = new Date(dayInfo.date);
             dayDate.setHours(0, 0, 0, 0);
             
-            if (
-                today.getDate() === dayDate.getDate() &&
-                today.getMonth() === dayDate.getMonth() &&
-                today.getFullYear() === dayDate.getFullYear()
-            ) {
+            if (today.getTime() === dayDate.getTime()) {
                 dayElement.classList.add('today');
             }
             
@@ -306,17 +309,17 @@ function renderCalendar() {
             const visibleTasks = dayTasks.slice(0, 3);
             visibleTasks.forEach(task => {
                 const taskElement = document.createElement('div');
-                taskElement.className = `task-item priority-${getPriorityClass(task.prioridade)}`;
+                const prioridadeNormalizada = normalizePrioridade(task.prioridade);
+                taskElement.className = `task-item priority-${prioridadeNormalizada}`;
                 
-                if (task.status === 'Concluído') {
-                    taskElement.classList.add('status-completed');
-                }
+                taskElement.innerHTML = `
+                    <div class="task-content">
+                        <span class="task-name">${task.nome_da_tarefa}</span>
+                    </div>
+                `;
                 
-                taskElement.textContent = task.nome_da_tarefa;
                 taskElement.title = task.nome_da_tarefa;
-                taskElement.dataset.taskId = task.id;
                 
-                // Evento de clique para editar a tarefa
                 taskElement.addEventListener('click', (e) => {
                     e.stopPropagation();
                     openTaskModal(task);
@@ -330,6 +333,12 @@ function renderCalendar() {
                 const moreTasksElement = document.createElement('div');
                 moreTasksElement.className = 'more-tasks';
                 moreTasksElement.textContent = `+ ${dayTasks.length - 3} mais`;
+                
+                moreTasksElement.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showAllDayTasks(dayInfo.date, dayTasks);
+                });
+                
                 tasksContainer.appendChild(moreTasksElement);
             }
             
@@ -342,6 +351,70 @@ function renderCalendar() {
             
             calendarGrid.appendChild(dayElement);
         });
+        
+        // Adicionar estilos específicos para os ícones no calendário
+        const calendarStyles = document.createElement('style');
+        calendarStyles.textContent = `
+            .task-item {
+                position: relative;
+                padding: 2px 8px;
+                margin-bottom: 2px;
+                border-radius: 4px;
+                font-size: 0.85em;
+                cursor: pointer;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .task-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .task-name {
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .status-icon {
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+            }
+
+            .status-icon i {
+                font-size: 0.9em;
+            }
+
+            .status-icon i.bi-circle { 
+                color: #6c757d;
+            }
+            .status-icon i.bi-play-circle { 
+                color: #0d6efd;
+            }
+            .status-icon i.bi-check-circle-fill { 
+                color: #198754;
+            }
+
+            .priority-alta { border-left: 3px solid #dc3545; }
+            .priority-media, .priority-média { border-left: 3px solid #ffc107; }
+            .priority-baixa { border-left: 3px solid #0d6efd; }
+        `;
+
+        // Remover estilos antigos se existirem
+        const oldStyles = document.getElementById('calendar-task-styles');
+        if (oldStyles) {
+            oldStyles.remove();
+        }
+
+        // Adicionar novos estilos
+        calendarStyles.id = 'calendar-task-styles';
+        document.head.appendChild(calendarStyles);
         
         console.log('Calendário renderizado com sucesso!');
         
@@ -403,19 +476,48 @@ function getTasksForDate(date) {
 
 // Abrir modal com tarefas do dia
 function openDayTasks(date, tasks) {
-    if (!dayTasksModal) return;
-    
-    // Armazenar dia selecionado
-    selectedDay = date;
-    
-    // Formatar data para o título
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = date.toLocaleDateString('pt-BR', options);
-    
-    // Atualizar título do modal
-    const modalTitle = document.getElementById('day-modal-title');
-    if (modalTitle) {
-        modalTitle.textContent = `Tarefas para ${formattedDate}`;
+    const dayTasksModal = document.getElementById('day-tasks-modal');
+    if (!dayTasksModal) {
+        // Criar o modal se não existir
+        const modal = document.createElement('div');
+        modal.id = 'day-tasks-modal';
+        modal.className = 'modal';
+        
+        // Formatar data para o título
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const formattedDate = date.toLocaleDateString('pt-BR', options);
+        
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="day-modal-title">Tarefas para ${formattedDate}</h3>
+                    <button class="close-btn">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="day-tasks-list" class="day-tasks-list"></div>
+                </div>
+                <div class="day-modal-footer">
+                    <button class="btn btn-primary" id="add-task-to-day">
+                        <i class="bi bi-plus"></i>
+                        Nova Tarefa
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Adicionar eventos
+        const closeBtn = modal.querySelector('.close-btn');
+        closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+        
+        const addTaskBtn = modal.querySelector('#add-task-to-day');
+        addTaskBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+            openTaskModalWithDate(date);
+        });
     }
     
     // Atualizar lista de tarefas
@@ -433,29 +535,25 @@ function openDayTasks(date, tasks) {
             `;
             tasksList.appendChild(emptyState);
         } else {
+            // Ordenar tarefas por prioridade
+            const sortedTasks = [...tasks].sort((a, b) => {
+                const prioridadeOrdem = { 'Alta': 1, 'Média': 2, 'Baixa': 3 };
+                return prioridadeOrdem[a.prioridade] - prioridadeOrdem[b.prioridade];
+            });
+            
             // Renderizar tarefas
-            tasks.forEach(task => {
+            sortedTasks.forEach(task => {
                 const taskItem = document.createElement('div');
-                taskItem.className = `day-task-item priority-${getPriorityClass(task.prioridade)}`;
+                const classes = [`day-task-item`, `priority-${task.prioridade.toLowerCase()}`];
                 
+                // Adicionar classe para tarefas concluídas
                 if (task.status === 'Concluído') {
-                    taskItem.classList.add('status-completed');
+                    classes.push('task-completed');
                 }
                 
-                // Ícone de status
-                let statusIcon = '';
-                if (task.status === 'Não iniciado') {
-                    statusIcon = '<i class="bi bi-circle"></i>';
-                } else if (task.status === 'Em andamento') {
-                    statusIcon = '<i class="bi bi-play-circle"></i>';
-                } else if (task.status === 'Concluído') {
-                    statusIcon = '<i class="bi bi-check-circle-fill"></i>';
-                }
+                taskItem.className = classes.join(' ');
                 
                 taskItem.innerHTML = `
-                    <div class="task-status-icon status-${getStatusClass(task.status)}">
-                        ${statusIcon}
-                    </div>
                     <div class="task-content">
                         <div class="task-title">${task.nome_da_tarefa}</div>
                         <div class="task-details">
@@ -478,7 +576,7 @@ function openDayTasks(date, tasks) {
                     editBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         openTaskModal(task);
-                        closeDayTasks();
+                        dayTasksModal.classList.remove('active');
                     });
                 }
                 
@@ -495,7 +593,7 @@ function openDayTasks(date, tasks) {
                 // Clicar na tarefa também deve abrir para edição
                 taskItem.addEventListener('click', () => {
                     openTaskModal(task);
-                    closeDayTasks();
+                    dayTasksModal.classList.remove('active');
                 });
                 
                 tasksList.appendChild(taskItem);
@@ -504,7 +602,10 @@ function openDayTasks(date, tasks) {
     }
     
     // Exibir modal
-    dayTasksModal.classList.add('active');
+    const modal = document.getElementById('day-tasks-modal');
+    if (modal) {
+        modal.classList.add('active');
+    }
 }
 
 // Fechar modal de tarefas do dia
@@ -754,4 +855,197 @@ function showNotification(message, type = 'success') {
             notification.classList.remove('show');
         }, 3000);
     }
+}
+
+// Função para mostrar todas as tarefas do dia
+function showAllDayTasks(date, tasks) {
+    const modal = document.createElement('div');
+    modal.className = 'all-tasks-modal';
+    
+    // Formatar a data para o título
+    const dia = date.getDate().toString().padStart(2, '0');
+    const mes = (date.getMonth() + 1).toString().padStart(2, '0');
+    
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-content">
+                    <h3>Tarefas do dia ${dia}/${mes}</h3>
+                    <p class="subtitle">Clique em uma tarefa para ver detalhes</p>
+                </div>
+                <button class="close-btn"><i class="bi bi-x-lg"></i></button>
+            </div>
+            
+            <div class="legends-bar">
+                <div class="legend-section">
+                    <h4>Legenda de Prioridades:</h4>
+                    <div class="legend-items">
+                        <div class="priority-legend">
+                            <div class="priority-bar alta"></div>
+                            <span>Alta</span>
+                        </div>
+                        <div class="priority-legend">
+                            <div class="priority-bar media"></div>
+                            <span>Média</span>
+                        </div>
+                        <div class="priority-legend">
+                            <div class="priority-bar baixa"></div>
+                            <span>Baixa</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <div class="tasks-list"></div>
+            </div>
+        </div>
+    `;
+
+    // Adicionar estilos necessários para o modal
+    const styles = document.createElement('style');
+    styles.textContent = `
+        .all-tasks-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            background: #f8f9fa;
+        }
+        .legends-bar {
+            padding: 15px 20px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .legend-items {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .priority-legend {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .priority-bar {
+            width: 3px;
+            height: 16px;
+            border-radius: 2px;
+        }
+        .priority-bar.alta { background-color: #dc3545; }
+        .priority-bar.media { background-color: #ffc107; }
+        .priority-bar.baixa { background-color: #0d6efd; }
+        
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(85vh - 200px);
+        }
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .task-card {
+            padding: 15px;
+            border-radius: 8px;
+            background: #fff;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .task-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            border-radius: 3px 0 0 3px;
+        }
+        .task-card.priority-alta::before { background-color: #dc3545; }
+        .task-card.priority-media::before { background-color: #ffc107; }
+        .task-card.priority-baixa::before { background-color: #0d6efd; }
+    `;
+    document.head.appendChild(styles);
+
+    // Renderizar tarefas
+    const tasksList = modal.querySelector('.tasks-list');
+    
+    if (tasks.length === 0) {
+        tasksList.innerHTML = '<div class="no-tasks">Nenhuma tarefa para este dia</div>';
+    } else {
+        // Ordenar tarefas por prioridade
+        const sortedTasks = [...tasks].sort((a, b) => {
+            const prioridadeOrdem = { 'Alta': 1, 'Média': 2, 'Baixa': 3 };
+            return prioridadeOrdem[a.prioridade] - prioridadeOrdem[b.prioridade];
+        });
+
+        sortedTasks.forEach(task => {
+            const taskCard = document.createElement('div');
+            const classes = ['task-card', `priority-${task.prioridade.toLowerCase()}`];
+            
+            // Adicionar classe para tarefas concluídas
+            if (task.status === 'Concluído') {
+                classes.push('task-completed');
+            }
+            
+            taskCard.className = classes.join(' ');
+            
+            taskCard.innerHTML = `
+                <div class="task-info">
+                    <div class="task-title">${task.nome_da_tarefa}</div>
+                    <div class="task-details">
+                        ${task.prioridade} · ${task.tipo_de_tarefa}
+                    </div>
+                </div>
+            `;
+            
+            taskCard.addEventListener('click', () => {
+                openTaskModal(task);
+                modal.remove();
+            });
+            
+            tasksList.appendChild(taskCard);
+        });
+    }
+
+    // Eventos para fechar o modal
+    const closeBtn = modal.querySelector('.close-btn');
+    closeBtn.addEventListener('click', () => modal.remove());
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+
+    document.body.appendChild(modal);
 } 

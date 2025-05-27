@@ -462,4 +462,100 @@
     font-size: 1rem;
     font-weight: 500;
     margin-top: 10px;
+}
+
+/* Estilos para a legenda do calendário */
+.calendar-legend {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin: 20px 0;
+    padding: 16px;
+}
+
+.calendar-legend h4 {
+    color: #333;
+    font-size: 0.9rem;
+    margin: 0 0 8px 0;
+}
+
+.calendar-legend h4:not(:first-child) {
+    margin-top: 16px;
+}
+
+.legend-items {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+}
+
+.legend-color.priority-high {
+    background-color: #fff8f8;
+    border-left: 3px solid #e74c3c;
+}
+
+.legend-color.priority-medium {
+    background-color: #fffcf8;
+    border-left: 3px solid #f39c12;
+}
+
+.legend-color.priority-low {
+    background-color: #f8fbff;
+    border-left: 3px solid #3498db;
+}
+
+.legend-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+}
+
+.legend-status i {
+    font-size: 1rem;
+}
+
+.legend-status.not-started i {
+    color: #6c757d;
+}
+
+.legend-status.in-progress i {
+    color: #007bff;
+}
+
+.legend-status.completed i {
+    color: #28a745;
+}
+
+.legend-item span {
+    font-size: 0.85rem;
+    color: #555;
+}
+
+/* Estilos para tarefas concluídas */
+.task-completed .task-title {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.task-completed .task-details {
+    color: #999;
+}
+
+.task-completed {
+    opacity: 0.8;
+    background-color: #f8f8f8;
 } 

@@ -39,6 +39,75 @@ let taskTypeModal;
 let closeTypeModalBtn;
 let taskTypeForm;
 
+// Adicionar estilos para as prioridades
+const priorityStyles = document.createElement('style');
+priorityStyles.textContent = `
+    .priority-cell {
+        text-align: center;
+    }
+    
+    .priority-content {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .priority-indicator {
+        width: 3px;
+        height: 16px;
+        border-radius: 2px;
+    }
+    
+    .priority-text {
+        display: inline-block;
+    }
+    
+    .priority-alta .priority-indicator {
+        background-color: #dc3545;
+    }
+    .priority-media .priority-indicator,
+    .priority-média .priority-indicator {
+        background-color: #ffc107;
+    }
+    .priority-baixa .priority-indicator {
+        background-color: #0d6efd;
+    }
+
+    /* Estilos para os ícones de status */
+    .status-cell {
+        text-align: center;
+    }
+    
+    .status-content {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .status-icon {
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .status-text {
+        display: inline-block;
+    }
+    
+    .status-not-started .status-icon {
+        color: #4B5563;
+    }
+    .status-in-progress .status-icon {
+        color: #1E40AF;
+    }
+    .status-completed .status-icon {
+        color: #166534;
+    }
+`;
+document.head.appendChild(priorityStyles);
+
 // Inicialização
 document.addEventListener('DOMContentLoaded', async () => {
     // Verificar se estamos na página dashboard
@@ -378,6 +447,11 @@ function renderTasks(tasks) {
         const statusClass = getStatusClass(task.status);
         const priorityClass = getPriorityClass(task.prioridade);
         
+        // Adicionar a classe de prioridade à linha
+        const prioridadeNormalizada = task.prioridade.toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+        
         // Truncar descrição se for muito longa
         const descricaoAbreviada = task.descricao && task.descricao.length > 50 
             ? task.descricao.substring(0, 50) + '...' 
@@ -386,10 +460,20 @@ function renderTasks(tasks) {
         row.innerHTML = `
             <td><input type="checkbox" class="task-check" ${task.status === 'Concluído' ? 'checked' : ''}></td>
             <td class="task-name-cell">${task.nome_da_tarefa}</td>
-            <td><span class="status-badge ${statusClass}">${task.status}</span></td>
+            <td class="status-cell ${statusClass}">
+                <div class="status-content">
+                    <span class="status-icon">${getStatusIcon(task.status)}</span>
+                    <span class="status-text">${task.status}</span>
+                </div>
+            </td>
             <td>Você</td>
             <td class="${isAtrasada ? 'date-overdue' : ''}">${formattedDate}</td>
-            <td><span class="priority-badge ${priorityClass}">${task.prioridade}</span></td>
+            <td class="priority-cell priority-${prioridadeNormalizada}">
+                <div class="priority-content">
+                    <div class="priority-indicator"></div>
+                    <span class="priority-text">${task.prioridade}</span>
+                </div>
+            </td>
             <td>${task.tipo_de_tarefa}</td>
             <td title="${task.descricao || ''}">${descricaoAbreviada}</td>
             <td>${task.nivel_de_esforco}</td>
@@ -476,6 +560,20 @@ function renderTasks(tasks) {
             nameCell.addEventListener('click', () => openTaskModal(task));
         }
     });
+}
+
+// Obter ícone para o status
+function getStatusIcon(status) {
+    switch (status) {
+        case 'Não iniciado':
+            return '<i class="bi bi-circle" style="color: #4B5563;"></i>';
+        case 'Em andamento':
+            return '<i class="bi bi-circle" style="color: #1E40AF;"></i>';
+        case 'Concluído':
+            return '<i class="bi bi-check-circle-fill" style="color: #166534;"></i>';
+        default:
+            return '<i class="bi bi-circle" style="color: #4B5563;"></i>';
+    }
 }
 
 // Obter classe CSS para o status
