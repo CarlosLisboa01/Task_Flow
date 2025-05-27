@@ -187,6 +187,38 @@
         #priority-high { background-color: #f44336; }
         #priority-medium { background-color: #FF9800; }
         #priority-low { background-color: #4CAF50; }
+
+        .report-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .weekly-tasks-chart {
+            height: 400px;
+            padding: 20px;
+            position: relative;
+            background-color: white;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .report-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            padding-left: 10px;
+            border-left: 4px solid #7B68EE;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
     </style>
 </head>
 <body>
@@ -327,6 +359,13 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="report-section">
+                <h3>Tarefas Concluídas por Dia da Semana</h3>
+                <div class="weekly-tasks-chart">
+                    <canvas id="weeklyTasksChart"></canvas>
+                </div>
+            </div>
         </main>
     </div>
     
@@ -339,5 +378,6 @@
     <script src="auth.js"></script>
     <script src="ui.js"></script>
     <script src="relatorios.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html> 

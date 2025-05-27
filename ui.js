@@ -1,8 +1,44 @@
 // Elementos do DOM
 const selectAllCheckbox = document.getElementById('select-all');
+const userNameElement = document.getElementById('user-name');
+const userEmailElement = document.getElementById('user-email');
+
+// Função para atualizar os dados do usuário na interface
+async function updateUserInfo() {
+    try {
+        const { data: { session }, error } = await window.supabaseClient.auth.getSession();
+        
+        if (error) throw error;
+        
+        if (session && session.user) {
+            const { data: profile, error: profileError } = await window.supabaseClient
+                .from('profiles')
+                .select('full_name')
+                .eq('id', session.user.id)
+                .single();
+
+            if (userNameElement) {
+                if (profile && profile.full_name) {
+                    userNameElement.textContent = profile.full_name;
+                } else {
+                    userNameElement.textContent = session.user.email.split('@')[0];
+                }
+            }
+
+            if (userEmailElement) {
+                userEmailElement.textContent = session.user.email;
+            }
+        }
+    } catch (error) {
+        console.error('Erro ao atualizar informações do usuário:', error);
+    }
+}
 
 // Inicialização
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Atualizar informações do usuário
+    await updateUserInfo();
+    
     // Verificar se estamos na página dashboard
     if (!window.location.pathname.includes('dashboard.html')) return;
     

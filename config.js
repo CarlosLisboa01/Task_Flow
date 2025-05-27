@@ -1,21 +1,25 @@
-// Configuração do Supabase
-const SUPABASE_CONFIG = {
-    url: 'https://kvwsfagncbamiezjdlms.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2d3NmYWduY2JhbWllempkbG1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3NDM5NzMsImV4cCI6MjA2MzMxOTk3M30.ly782UFmGElGyt9lcuPwJeczcDH9pDcKXf8K7HF9ULY'
+// Configuração segura do ambiente
+const CONFIG = {
+    SUPABASE_URL: process.env.SUPABASE_URL || 'https://kvwsfagncbamiezjdlms.supabase.co',
+    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+    API_VERSION: '1.0.0',
+    DEBUG_MODE: process.env.NODE_ENV !== 'production',
+    CACHE_DURATION: 3600, // 1 hora em segundos
+    MAX_RETRY_ATTEMPTS: 3,
+    REQUEST_TIMEOUT: 10000, // 10 segundos
+    SECURITY: {
+        MAX_LOGIN_ATTEMPTS: 5,
+        PASSWORD_MIN_LENGTH: 8,
+        SESSION_TIMEOUT: 3600000, // 1 hora em milissegundos
+        ALLOWED_ORIGINS: ['http://localhost:3000', 'https://taskflow.com']
+    }
 };
 
-// Função para inicializar o cliente Supabase
-function initSupabaseClient() {
-    if (!window.supabaseClient) {
-        console.log('Inicializando cliente Supabase');
-        window.supabaseClient = window.supabase.createClient(
-            SUPABASE_CONFIG.url,
-            SUPABASE_CONFIG.anonKey
-        );
-    }
-    return window.supabaseClient;
+// Validação de segurança básica
+if (!CONFIG.SUPABASE_ANON_KEY) {
+    console.error('Chave do Supabase não configurada!');
+    throw new Error('Configuração de ambiente incompleta');
 }
 
-// Exportar funções e configurações
-window.initSupabaseClient = initSupabaseClient;
-window.SUPABASE_CONFIG = SUPABASE_CONFIG; 
+Object.freeze(CONFIG); // Previne modificações no objeto de configuração
+export default CONFIG; 

@@ -96,13 +96,16 @@ priorityStyles.textContent = `
         display: inline-block;
     }
     
-    .status-not-started .status-icon {
+    .status-not-started .status-icon,
+    .status-not-started .status-text {
         color: #4B5563;
     }
-    .status-in-progress .status-icon {
+    .status-in-progress .status-icon,
+    .status-in-progress .status-text {
         color: #1E40AF;
     }
-    .status-completed .status-icon {
+    .status-completed .status-icon,
+    .status-completed .status-text {
         color: #166534;
     }
 `;

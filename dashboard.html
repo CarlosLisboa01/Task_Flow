@@ -21,7 +21,7 @@
             </div>
             
             <nav class="nav-menu">
-                <a href="#" class="nav-item active">
+                <a href="dashboard.html" class="nav-item active">
                     <i class="bi bi-check2-square"></i>
                     <span>Tarefas</span>
                 </a>
@@ -250,17 +250,16 @@
         </div>
     </div>
     
-    <!-- Scripts de otimização -->
-    <script src="config.js"></script>
-    <script src="utils.js"></script>
-    <script src="domCache.js"></script>
-    <script src="performance.js"></script>
-    <script src="resourceManager.js"></script>
+    <!-- Scripts -->
+    <!-- Primeiro carregamos o auth.js para inicializar o Supabase e a autenticação -->
+    <script src="auth.js"></script>
     
-    <!-- Scripts principais -->
-    <script src="tasks.js"></script>
+    <!-- Depois carregamos os scripts de utilidades -->
+    <script src="utils.js"></script>
     <script src="ui.js"></script>
+    
+    <!-- Por fim, carregamos os scripts específicos da página -->
+    <script src="tasks.js"></script>
     <script src="fix-modal.js"></script>
-    <script src="calendario.js"></script>
 </body>
 </html> 

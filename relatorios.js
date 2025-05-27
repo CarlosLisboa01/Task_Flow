@@ -160,18 +160,199 @@ function atualizarRelatorios(dados) {
     }
 }
 
+// Função para criar o gráfico de tarefas concluídas por dia da semana
+function createWeeklyTasksChart(tasks) {
+    console.log('Iniciando criação do gráfico com', tasks.length, 'tarefas');
+    
+    const diasDaSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+    const tarefasPorDia = new Array(7).fill(0);
+    
+    // Pegar a data atual para calcular a semana atual
+    const hoje = new Date();
+    const inicioSemana = new Date(hoje);
+    inicioSemana.setDate(hoje.getDate() - hoje.getDay());
+    inicioSemana.setHours(0, 0, 0, 0);
+    
+    const fimSemana = new Date(inicioSemana);
+    fimSemana.setDate(fimSemana.getDate() + 6);
+    fimSemana.setHours(23, 59, 59, 999);
+    
+    console.log('Período do gráfico:', inicioSemana, 'até', fimSemana);
+    
+    // Filtrar e contar tarefas concluídas na semana atual
+    tasks.forEach(task => {
+        console.log('Analisando tarefa:', task);
+        if (task.status === 'Concluído') {
+            let dataConclusao;
+            
+            // Tentar obter a data de diferentes campos
+            if (task.data_conclusao) {
+                dataConclusao = new Date(task.data_conclusao);
+            } else if (task.updated_at) {
+                dataConclusao = new Date(task.updated_at);
+            } else if (task.created_at) {
+                dataConclusao = new Date(task.created_at);
+            }
+
+            // Verificar se a data é válida
+            if (dataConclusao && !isNaN(dataConclusao)) {
+                console.log('Data de conclusão válida:', dataConclusao);
+                if (dataConclusao >= inicioSemana && dataConclusao <= fimSemana) {
+                    const diaDaSemana = dataConclusao.getDay();
+                    tarefasPorDia[diaDaSemana]++;
+                    console.log('Tarefa contabilizada para', diasDaSemana[diaDaSemana]);
+                }
+            } else {
+                console.log('Data de conclusão inválida para a tarefa:', task);
+            }
+        }
+    });
+    
+    console.log('Contagem por dia:', tarefasPorDia);
+    
+    // Criar ou atualizar o gráfico
+    const ctx = document.getElementById('weeklyTasksChart');
+    if (!ctx) {
+        console.error('Canvas não encontrado!');
+        return;
+    }
+    
+    try {
+        // Destruir gráfico existente se houver
+        if (window.weeklyTasksChart instanceof Chart) {
+            window.weeklyTasksChart.destroy();
+        }
+        
+        window.weeklyTasksChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: diasDaSemana,
+                datasets: [{
+                    label: 'Tarefas Concluídas',
+                    data: tarefasPorDia,
+                    backgroundColor: '#7B68EE',
+                    borderColor: '#6A5ACD',
+                    borderWidth: 1,
+                    borderRadius: 5,
+                    maxBarThickness: 50
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: (context) => diasDaSemana[context[0].dataIndex],
+                            label: (context) => {
+                                const count = context.raw;
+                                return `${count} tarefa${count !== 1 ? 's' : ''} concluída${count !== 1 ? 's' : ''}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: {
+                                size: 12
+                            }
+                        },
+                        grid: {
+                            color: '#e0e0e0'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Número de Tarefas',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        console.log('Gráfico criado com sucesso!');
+    } catch (error) {
+        console.error('Erro ao criar o gráfico:', error);
+    }
+}
+
+// Função para verificar se o Chart.js está carregado
+function isChartJsLoaded() {
+    return typeof Chart !== 'undefined';
+}
+
+// Função para esperar o Chart.js carregar
+function waitForChartJs() {
+    return new Promise((resolve, reject) => {
+        if (isChartJsLoaded()) {
+            resolve();
+            return;
+        }
+
+        let attempts = 0;
+        const maxAttempts = 10;
+        const interval = setInterval(() => {
+            attempts++;
+            if (isChartJsLoaded()) {
+                clearInterval(interval);
+                resolve();
+            } else if (attempts >= maxAttempts) {
+                clearInterval(interval);
+                reject(new Error('Chart.js não carregou após várias tentativas'));
+            }
+        }, 500);
+    });
+}
+
 // Função principal para atualizar tudo
 async function atualizarTudo() {
     console.log('Iniciando atualização dos relatórios...');
-    const tasks = await fetchUserTasks();
-    const dados = calcularRelatorios(tasks);
-    atualizarRelatorios(dados);
+    try {
+        await waitForChartJs();
+        const tasks = await fetchUserTasks();
+        console.log('Tarefas obtidas:', tasks);
+        const dados = calcularRelatorios(tasks);
+        atualizarRelatorios(dados);
+        createWeeklyTasksChart(tasks);
+    } catch (error) {
+        console.error('Erro ao atualizar relatórios:', error);
+    }
 }
 
 // Inicialização e listeners
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Página de relatórios carregada');
-    atualizarTudo();
+    
+    // Carregar script do Chart.js dinamicamente se necessário
+    if (!isChartJsLoaded()) {
+        console.log('Carregando Chart.js...');
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        script.onload = () => {
+            console.log('Chart.js carregado com sucesso');
+            atualizarTudo();
+        };
+        document.head.appendChild(script);
+    } else {
+        atualizarTudo();
+    }
 
     // Subscrever ao canal de atualizações em tempo real
     const channel = window.supabaseClient
@@ -188,9 +369,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 });
 
+// Função para atualizar a data de conclusão de uma tarefa
+async function atualizarDataConclusao(taskId) {
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('tarefas')
+            .update({ data_conclusao: new Date().toISOString() })
+            .eq('id', taskId)
+            .select();
+
+        if (error) {
+            console.error('Erro ao atualizar data de conclusão:', error);
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        console.error('Erro ao atualizar data de conclusão:', error);
+        return false;
+    }
+}
+
 // Atualizar quando houver mudanças nas tarefas
-document.addEventListener('tasksUpdated', () => {
+document.addEventListener('tasksUpdated', async (event) => {
     console.log('Evento tasksUpdated recebido');
+    if (event.detail && event.detail.taskId && event.detail.status === 'Concluído') {
+        await atualizarDataConclusao(event.detail.taskId);
+    }
     atualizarTudo();
 });
 
