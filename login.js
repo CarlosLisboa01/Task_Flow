@@ -221,12 +221,11 @@ async function handleSocialLogin(e) {
         e.currentTarget.classList.add('loading');
 
         const options = {
-            redirectTo: `${window.location.origin}/dashboard.html`,
+            redirectTo: 'https://carlosh071.github.io/Task_Flow/dashboard.html',
             scopes: 'email profile',
             queryParams: {
                 access_type: 'offline',
-                prompt: 'select_account',
-                client_id: '568240334427-sfj0tgs0cat59r7d2lsueuen07nl6tqh.apps.googleusercontent.com'
+                prompt: 'select_account'
             }
         };
 
