@@ -22,4 +22,52 @@ if (!CONFIG.SUPABASE_ANON_KEY) {
 }
 
 Object.freeze(CONFIG); // Previne modificações no objeto de configuração
-export default CONFIG; 
+export default CONFIG;
+
+// Configurações do Supabase
+const SUPABASE_CONFIG = {
+    url: 'https://kvwsfagncbamiezjdlms.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2d3NmYWduY2JhbWllempkbG1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3NDM5NzMsImV4cCI6MjA2MzMxOTk3M30.ly782UFmGElGyt9lcuPwJeczcDH9pDcKXf8K7HF9ULY',
+    
+    // Configurações dos provedores OAuth
+    oauth: {
+        google: {
+            enabled: true,
+            clientId: '568240334427-sfj0tgs0cat59r7d2lsueuen07nl6tqh.apps.googleusercontent.com',
+            redirectUrl: `${window.location.origin}/dashboard.html`,
+            scope: 'email profile',
+            prompt: 'select_account'
+        }
+    }
+};
+
+// Inicialização do cliente Supabase
+function initSupabase() {
+    try {
+        const supabaseClient = supabase.createClient(
+            SUPABASE_CONFIG.url,
+            SUPABASE_CONFIG.anonKey
+        );
+        console.log('Cliente Supabase inicializado com sucesso');
+        return supabaseClient;
+    } catch (error) {
+        console.error('Erro ao inicializar Supabase:', error);
+        throw error;
+    }
+}
+
+// Função para obter a URL de callback do OAuth
+function getOAuthRedirectUrl(provider) {
+    return SUPABASE_CONFIG.oauth[provider]?.redirectUrl || `${window.location.origin}/dashboard.html`;
+}
+
+// Função para obter as configurações do OAuth por provedor
+function getOAuthConfig(provider) {
+    return SUPABASE_CONFIG.oauth[provider] || {};
+}
+
+// Exportar as configurações e funções
+window.SUPABASE_CONFIG = SUPABASE_CONFIG;
+window.initSupabase = initSupabase;
+window.getOAuthRedirectUrl = getOAuthRedirectUrl;
+window.getOAuthConfig = getOAuthConfig; 

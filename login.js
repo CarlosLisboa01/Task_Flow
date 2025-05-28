@@ -30,8 +30,16 @@ if (typeof supabase === 'undefined') {
 let loginForm;
 let loginEmail;
 let loginPassword;
+let registerForm;
+let registerName;
+let registerEmail;
+let registerPassword;
+let registerConfirmPassword;
 let notification;
 let notificationMessage;
+let sliderContainer;
+let toggleButtons;
+let forgotPasswordLink;
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', async () => {
@@ -46,8 +54,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     loginForm = document.getElementById('login-form');
     loginEmail = document.getElementById('login-email');
     loginPassword = document.getElementById('login-password');
+    registerForm = document.getElementById('register-form');
+    registerName = document.getElementById('register-name');
+    registerEmail = document.getElementById('register-email');
+    registerPassword = document.getElementById('register-password');
+    registerConfirmPassword = document.getElementById('register-confirm-password');
     notification = document.getElementById('notification');
     notificationMessage = document.getElementById('notification-message');
+    sliderContainer = document.querySelector('.slider-container');
+    toggleButtons = document.querySelectorAll('.toggle-form');
+    forgotPasswordLink = document.querySelector('.forgot-password');
+    
+    // Configurar eventos do slider
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            sliderContainer.classList.toggle('right-panel-active');
+            
+            // Resetar formulários ao trocar
+            loginForm.reset();
+            registerForm.reset();
+            
+            // Animar elementos do banner
+            setTimeout(() => {
+                const activeBanner = sliderContainer.classList.contains('right-panel-active') 
+                    ? document.querySelector('.register-banner') 
+                    : document.querySelector('.login-banner');
+                
+                activeBanner.querySelectorAll('*').forEach((element, index) => {
+                    element.style.animation = 'none';
+                    element.offsetHeight; // Trigger reflow
+                    element.style.animation = `fadeIn 0.6s ease-in-out ${index * 0.2}s forwards`;
+                });
+            }, 300);
+        });
+    });
+
+    // Adicionar animação ao carregar a página
+    setTimeout(() => {
+        document.querySelector('.login-banner').querySelectorAll('*').forEach((element, index) => {
+            element.style.animation = `fadeIn 0.6s ease-in-out ${index * 0.2}s forwards`;
+        });
+    }, 100);
     
     // Verificar se o Supabase está disponível
     if (!window.supabaseClient) {
@@ -76,11 +123,130 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Erro ao verificar sessão:', error);
     }
     
-    // Configurar evento de login
+    // Configurar eventos dos formulários
     if (loginForm) {
         loginForm.addEventListener('submit', handleLogin);
     }
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegister);
+    }
+
+    // Configurar eventos dos botões sociais
+    const socialButtons = document.querySelectorAll('.social-btn');
+    socialButtons.forEach(button => {
+        button.addEventListener('click', handleSocialLogin);
+    });
+
+    // Configurar evento de recuperação de senha
+    if (forgotPasswordLink) {
+        forgotPasswordLink.addEventListener('click', handleForgotPassword);
+    }
 });
+
+// Função para lidar com registro
+async function handleRegister(e) {
+    e.preventDefault();
+    
+    if (!registerName || !registerEmail || !registerPassword || !registerConfirmPassword) {
+        console.error('Elementos do formulário não encontrados');
+        return;
+    }
+    
+    const name = registerName.value.trim();
+    const email = registerEmail.value.trim();
+    const password = registerPassword.value;
+    const confirmPassword = registerConfirmPassword.value;
+    
+    // Validação básica
+    if (!name || !email || !password || !confirmPassword) {
+        showNotification('Por favor, preencha todos os campos.', 'error');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        showNotification('As senhas não coincidem.', 'error');
+        return;
+    }
+    
+    try {
+        // Mostrar indicador de carregamento
+        const submitBtn = registerForm.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Registrando...';
+        }
+        
+        // Registrar com o Supabase
+        const { data, error } = await window.supabaseClient.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    name: name
+                }
+            }
+        });
+        
+        if (error) throw error;
+        
+        // Registro bem-sucedido
+        showNotification('Registro realizado com sucesso! Verifique seu email para confirmar a conta.', 'success');
+        
+        // Voltar para o formulário de login após 2 segundos
+        setTimeout(() => {
+            sliderContainer.classList.remove('right-panel-active');
+            registerForm.reset();
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Erro ao registrar:', error);
+        showNotification(error.message || 'Erro ao criar conta. Por favor, tente novamente.', 'error');
+    } finally {
+        const submitBtn = registerForm.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Registrar';
+        }
+    }
+}
+
+// Função para lidar com login social
+async function handleSocialLogin(e) {
+    e.preventDefault();
+    
+    try {
+        // Desabilitar o botão durante o processo
+        e.currentTarget.style.pointerEvents = 'none';
+        e.currentTarget.style.opacity = '0.7';
+        e.currentTarget.classList.add('loading');
+
+        const options = {
+            redirectTo: `${window.location.origin}/dashboard.html`,
+            scopes: 'email profile',
+            queryParams: {
+                access_type: 'offline',
+                prompt: 'select_account',
+                client_id: '568240334427-sfj0tgs0cat59r7d2lsueuen07nl6tqh.apps.googleusercontent.com'
+            }
+        };
+
+        const { data, error } = await window.supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options
+        });
+
+        if (error) throw error;
+
+    } catch (error) {
+        console.error('Erro ao fazer login com Google:', error);
+        showNotification('Erro ao fazer login com Google. Por favor, tente novamente.', 'error');
+        
+        // Reabilitar o botão em caso de erro
+        e.currentTarget.style.pointerEvents = 'auto';
+        e.currentTarget.style.opacity = '1';
+        e.currentTarget.classList.remove('loading');
+    }
+}
 
 // Função para lidar com o login
 async function handleLogin(e) {
@@ -107,7 +273,7 @@ async function handleLogin(e) {
         }
         
         // Mostrar indicador de carregamento
-        const submitBtn = document.querySelector('#login-form button[type="submit"]');
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
         if (submitBtn) {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Aguarde...';
@@ -145,10 +311,55 @@ async function handleLogin(e) {
         console.error('Erro ao fazer login:', error);
         showNotification('Ocorreu um erro ao fazer login. Por favor, tente novamente.', 'error');
         
-        const submitBtn = document.querySelector('#login-form button[type="submit"]');
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
         if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Entrar';
+        }
+    }
+}
+
+// Função para lidar com recuperação de senha
+async function handleForgotPassword(e) {
+    e.preventDefault();
+    
+    // Verificar se há um email preenchido
+    const email = loginEmail.value.trim();
+    if (!email) {
+        showNotification('Por favor, insira seu email para recuperar a senha.', 'error');
+        loginEmail.focus();
+        return;
+    }
+
+    try {
+        // Desabilitar o link durante o processo
+        const forgotLink = e.target;
+        const originalText = forgotLink.textContent;
+        forgotLink.style.pointerEvents = 'none';
+        forgotLink.textContent = 'Enviando...';
+
+        // Enviar email de recuperação
+        const { data, error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: `${window.location.origin}/reset-password.html`,
+        });
+
+        if (error) throw error;
+
+        showNotification('Email de recuperação enviado! Verifique sua caixa de entrada.', 'success');
+        
+    } catch (error) {
+        console.error('Erro ao solicitar recuperação de senha:', error);
+        showNotification(
+            error.message === 'User not found'
+                ? 'Email não encontrado. Verifique se digitou corretamente.'
+                : 'Erro ao enviar email de recuperação. Tente novamente.',
+            'error'
+        );
+    } finally {
+        // Restaurar o link
+        if (forgotPasswordLink) {
+            forgotPasswordLink.style.pointerEvents = 'auto';
+            forgotPasswordLink.textContent = 'Esqueceu a senha?';
         }
     }
 }

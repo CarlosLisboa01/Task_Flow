@@ -7,46 +7,97 @@
     <link rel="stylesheet" href="main.css">
     <link rel="stylesheet" href="login.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.1/dist/umd/supabase.min.js"></script>
+    <script src="config.js"></script>
+    <!-- Font Awesome para ícones mais bonitos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <div class="login-card">
-            <div class="logo">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#7B68EE"/>
-                </svg>
-                <h1>TaskFlow</h1>
-            </div>
-            
-            <div class="nav-tabs">
-                <a href="index.html" class="tab-link active">Login</a>
-                <a href="registro.html" class="tab-link">Registro</a>
-            </div>
-            
-            <div class="page-title">
-                <h2>Login</h2>
-                <p>Acesse sua conta para gerenciar suas tarefas</p>
-            </div>
-            
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="login-email">Email</label>
-                    <input type="email" id="login-email" required>
+        <div class="slider-container">
+            <!-- Lado Esquerdo - Login -->
+            <div class="form-side">
+                <div class="form-content login-form">
+                    <h2>Login</h2>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="login-email">Email</label>
+                            <input type="email" id="login-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">Senha</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        <div class="form-options">
+                            <label class="remember-me">
+                                <input type="checkbox"> Lembrar-me
+                            </label>
+                            <a href="#" class="forgot-password">Esqueceu a senha?</a>
+                        </div>
+                        <button type="submit" class="btn-primary">Entrar</button>
+                    </form>
+                    <div class="social-login">
+                        <span>Ou entre com Google</span>
+                        <div class="social-icons">
+                            <button class="social-btn google">
+                                <i class="fab fa-google"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="login-password">Senha</label>
-                    <input type="password" id="login-password" required>
+                
+                <!-- Formulário de Registro (inicialmente oculto) -->
+                <div class="form-content register-form">
+                    <h2>Criar conta</h2>
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="register-name">Nome</label>
+                            <input type="text" id="register-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-email">Email</label>
+                            <input type="email" id="register-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-password">Senha</label>
+                            <input type="password" id="register-password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-confirm-password">Confirmar senha</label>
+                            <input type="password" id="register-confirm-password" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Registrar</button>
+                    </form>
+                    <div class="social-login">
+                        <span>Ou registre-se com Google</span>
+                        <div class="social-icons">
+                            <button class="social-btn google">
+                                <i class="fab fa-google"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <button type="submit" class="btn">Entrar</button>
-            </form>
-            
-            <div class="register-link">
-                <p>Não tem uma conta? <a href="registro.html">Registre-se</a></p>
             </div>
             
-            <div class="notification-container" id="notification">
-                <p id="notification-message"></p>
+            <!-- Lado Direito - Banner -->
+            <div class="banner-side">
+                <div class="banner-content login-banner">
+                    <h1>TaskFlow</h1>
+                    <p class="impact-phrase">Transforme suas ideias em realizações, um passo de cada vez.</p>
+                    <p class="sub-text">Organize, planeje e alcance seus objetivos com eficiência.</p>
+                    <button class="btn-secondary toggle-form">Criar conta</button>
+                </div>
+                
+                <div class="banner-content register-banner">
+                    <h1>Bem-vindo de volta!</h1>
+                    <p class="impact-phrase">Já tem uma conta?</p>
+                    <p class="sub-text">Entre para continuar gerenciando suas tarefas.</p>
+                    <button class="btn-secondary toggle-form">Fazer login</button>
+                </div>
             </div>
+        </div>
+        
+        <div class="notification-container" id="notification">
+            <p id="notification-message"></p>
         </div>
     </div>
 
