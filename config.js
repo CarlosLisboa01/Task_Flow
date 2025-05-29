@@ -34,7 +34,7 @@ const SUPABASE_CONFIG = {
         google: {
             enabled: true,
             clientId: '568240334427-sfj0tgs0cat59r7d2lsueuen07nl6tqh.apps.googleusercontent.com',
-            redirectUrl: 'https://carlosh071.github.io/Task_Flow/dashboard.html',
+            redirectUrl: 'https://task-flow-orcin.vercel.app/',
             scope: 'email profile',
             prompt: 'select_account'
         }

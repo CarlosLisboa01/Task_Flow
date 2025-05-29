@@ -221,7 +221,7 @@ async function handleSocialLogin(e) {
         e.currentTarget.classList.add('loading');
 
         const options = {
-            redirectTo: 'https://carlosh071.github.io/Task_Flow/dashboard.html',
+            redirectTo: 'https://task-flow-orcin.vercel.app/',
             scopes: 'email profile',
             queryParams: {
                 access_type: 'offline',
@@ -229,12 +229,17 @@ async function handleSocialLogin(e) {
             }
         };
 
+        // Tentar login com Google
         const { data, error } = await window.supabaseClient.auth.signInWithOAuth({
             provider: 'google',
             options
         });
 
-        if (error) throw error;
+        if (error) {
+            throw error;
+        }
+
+        console.log('Redirecionando para autenticação Google...');
 
     } catch (error) {
         console.error('Erro ao fazer login com Google:', error);
