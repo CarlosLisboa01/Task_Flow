@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Gerenciamento de Tarefas</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.1/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Barra lateral -->
+        <aside class="sidebar">
+            <div class="logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#7B68EE"/>
+                </svg>
+                <h1>TaskFlow</h1>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-item active">
+                    <i class="bi bi-check2-square"></i>
+                    <span>Tarefas</span>
+                </a>
+                <a href="calendario.html" class="nav-item">
+                    <i class="bi bi-calendar3"></i>
+                    <span>Calendário</span>
+                </a>
+                <a href="relatorios.html" class="nav-item">
+                    <i class="bi bi-bar-chart"></i>
+                    <span>Relatórios</span>
+                </a>
+            </nav>
+            
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <div class="user-details">
+                    <span class="user-name" id="user-name">Carregando...</span>
+                    <span class="user-email" id="user-email">...</span>
+                </div>
+                <button id="logout-btn" class="logout-btn">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Conteúdo principal -->
+        <main class="main-content">
+            <header class="task-header">
+                <div class="page-title">
+                    <i class="bi bi-check2-square"></i>
+                    <h2>Controle de tarefas</h2>
+                </div>
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="search-input" placeholder="Buscar tarefas...">
+                    </div>
+                </div>
+            </header>
+            
+            <div class="filters-bar">
+                <div class="filter-group">
+                    <label for="status-filter">Status:</label>
+                    <select id="status-filter">
+                        <option value="">Todos</option>
+                        <option value="Não iniciado">Não iniciado</option>
+                        <option value="Em andamento">Em andamento</option>
+                        <option value="Concluído">Concluído</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="priority-filter">Prioridade:</label>
+                    <select id="priority-filter">
+                        <option value="">Todas</option>
+                        <option value="Alta">Alta</option>
+                        <option value="Média">Média</option>
+                        <option value="Baixa">Baixa</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="type-filter">Tipo de tarefa:</label>
+                    <div class="filter-with-button">
+                        <select id="type-filter">
+                            <option value="">Todos</option>
+                            <option value="Aperfeiçoar">Aperfeiçoar</option>
+                            <option value="Solicitação de recurso">Solicitação de recurso</option>
+                            <option value="Correção de bugs">Correção de bugs</option>
+                        </select>
+                        <button id="add-task-type-btn" class="btn-icon" title="Adicionar novo tipo">
+                            <i class="bi bi-plus-circle"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="filter-buttons">
+                    <button id="clear-filters-btn" class="btn-outline btn-sm">
+                        <i class="bi bi-x"></i>
+                        Limpar filtros
+                    </button>
+                    <button id="alt-add-task-btn" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus"></i>
+                        Nova Tarefa
+                    </button>
+                </div>
+            </div>
+            
+            <div class="tasks-table-container">
+                <table class="tasks-table">
+                    <thead>
+                        <tr>
+                            <th class="col-check">
+                                <input type="checkbox" id="select-all">
+                            </th>
+                            <th class="col-name">Nome da tarefa</th>
+                            <th class="col-status">Status</th>
+                            <th class="col-assignee">Responsável</th>
+                            <th class="col-date">Prazo</th>
+                            <th class="col-priority">Prioridade</th>
+                            <th class="col-type">Tipo de tarefa</th>
+                            <th class="col-desc">Descrição</th>
+                            <th class="col-effort">Nível de esforço</th>
+                            <th class="col-actions">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tasks-tbody">
+                        <!-- As tarefas serão carregadas via JavaScript -->
+                        <tr class="empty-state">
+                            <td colspan="10">
+                                <div class="empty-state-content">
+                                    <i class="bi bi-inbox"></i>
+                                    <p>Carregando tarefas...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Modal de tarefa -->
+    <div id="task-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Nova Tarefa</h3>
+                <button id="close-modal" class="close-btn">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <form id="task-form">
+                <input type="hidden" id="task-id">
+                <div class="form-group">
+                    <label for="task-name">Nome da tarefa</label>
+                    <input type="text" id="task-name" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="task-status">Status</label>
+                        <select id="task-status" required>
+                            <option value="Não iniciado">Não iniciado</option>
+                            <option value="Em andamento">Em andamento</option>
+                            <option value="Concluído">Concluído</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-priority">Prioridade</label>
+                        <select id="task-priority" required>
+                            <option value="Alta">Alta</option>
+                            <option value="Média">Média</option>
+                            <option value="Baixa">Baixa</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="task-due-date">Data limite</label>
+                        <input type="date" id="task-due-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-type">Tipo de tarefa</label>
+                        <div class="select-with-button">
+                            <select id="task-type" required>
+                                <option value="Aperfeiçoar">Aperfeiçoar</option>
+                                <option value="Solicitação de recurso">Solicitação de recurso</option>
+                                <option value="Correção de bugs">Correção de bugs</option>
+                            </select>
+                            <button type="button" id="modal-add-task-type-btn" class="btn-icon" title="Adicionar novo tipo">
+                                <i class="bi bi-plus-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="task-description">Descrição</label>
+                    <textarea id="task-description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="task-effort">Nível de esforço</label>
+                    <select id="task-effort" required>
+                        <option value="Pequeno">Pequeno</option>
+                        <option value="Médio">Médio</option>
+                        <option value="Grande">Grande</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="delete-task-btn" class="btn btn-danger hidden">
+                        <i class="bi bi-trash"></i>
+                        Excluir
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2-circle"></i>
+                        Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notificação -->
+    <div class="notification-container" id="notification">
+        <p id="notification-message"></p>
+    </div>
+    
+    <!-- Modal para adicionar novo tipo de tarefa -->
+    <div id="task-type-modal" class="modal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3>Novo Tipo de Tarefa</h3>
+                <button id="close-type-modal" class="close-btn">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <form id="task-type-form">
+                <div class="form-group">
+                    <label for="new-type-name">Nome do tipo de tarefa</label>
+                    <input type="text" id="new-type-name" required placeholder="Ex: Projeto, Reunião, Estudo...">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i>
+                        Adicionar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <!-- Primeiro carregamos o auth.js para inicializar o Supabase e a autenticação -->
+    <script src="auth.js"></script>
+    
+    <!-- Depois carregamos os scripts de utilidades -->
+    <script src="utils.js"></script>
+    <script src="ui.js"></script>
+    
+    <!-- Por fim, carregamos os scripts específicos da página -->
+    <script src="tasks.js"></script>
+    <script src="fix-modal.js"></script>
+</body>
+</html> 

@@ -1,0 +1,132 @@
+:root {
+    --primary: #7B68EE;
+    --primary-light: #9c8ef5;
+    --primary-dark: #6a57d0;
+    --text: #333;
+    --text-light: #666;
+    --background: #fff;
+    --background-alt: #f5f5f5;
+    --border: #ddd;
+    --success: #10b981;
+    --error: #ef4444;
+    --warning: #f59e0b;
+    --high: #ef4444;
+    --medium: #f59e0b;
+    --low: #10b981;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+    background-color: var(--background-alt);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.btn {
+    display: inline-block;
+    background-color: var(--primary);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.btn:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+}
+
+.btn-outline:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+.notification-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(150%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.notification-container.success {
+    border-left: 4px solid var(--success);
+}
+
+.notification-container.error {
+    border-left: 4px solid var(--error);
+}
+
+.notification-container.show {
+    transform: translateY(0);
+}
+
+/* Status e cores de prioridade */
+.status-badge, .priority-badge, .effort-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.priority-high {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--high);
+}
+
+.priority-medium {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--medium);
+}
+
+.priority-low {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--low);
+}
+
+.status-not-started {
+    color: #6b7280;
+}
+
+.status-in-progress {
+    color: #3b82f6;
+}
+
+.status-completed {
+    color: var(--success);
+}
+
+.hidden {
+    display: none !important;
+} 

@@ -1,0 +1,729 @@
+/* Layout principal */
+.app-container {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Barra lateral */
+.sidebar {
+    background-color: var(--background);
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sidebar .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px;
+    margin-bottom: 32px;
+}
+
+.sidebar .logo h1 {
+    font-size: 22px;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: auto;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: var(--text);
+    transition: background-color 0.2s;
+}
+
+.nav-item:hover {
+    background-color: var(--background-alt);
+}
+
+.nav-item.active {
+    color: var(--primary);
+    background-color: rgba(123, 104, 238, 0.08);
+    font-weight: 500;
+    position: relative;
+}
+
+.nav-item.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background-color: var(--primary);
+}
+
+.nav-item i {
+    font-size: 1.2rem;
+}
+
+.user-info {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    margin-top: auto;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 1.5rem;
+    color: var(--text-light);
+}
+
+.user-details {
+    flex: 1;
+    overflow: hidden;
+}
+
+.user-name {
+    display: block;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-email {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+}
+
+.logout-btn:hover {
+    color: var(--error);
+    background-color: rgba(239, 68, 68, 0.08);
+}
+
+/* Conteúdo principal */
+.main-content {
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: var(--background-alt);
+}
+
+/* Cabeçalho da página */
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-title i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.header-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: var(--background);
+    border-radius: 6px;
+    padding: 8px 12px;
+    width: 260px;
+    border: 1px solid var(--border);
+}
+
+.search-bar i {
+    color: var(--text-light);
+    margin-right: 8px;
+}
+
+.search-bar input {
+    border: none;
+    background: none;
+    flex: 1;
+    outline: none;
+}
+
+/* Estilos para a barra de filtros */
+.filters-bar {
+    display: flex;
+    gap: 20px;
+    background-color: #f9f9f9;
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-group label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    width: 90px;
+    display: inline-block;
+}
+
+.filter-group select {
+    padding: 8px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background-color: var(--background);
+    outline: none;
+    flex: 1;
+    min-width: 120px;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+    align-items: center;
+}
+
+/* Botão pequeno */
+.btn-sm {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+}
+
+/* Estilo especial para o botão Nova Tarefa */
+#alt-add-task-btn {
+    background-color: var(--primary);
+    color: white;
+    padding: 10px 16px;
+    font-weight: 500;
+    box-shadow: 0 3px 8px rgba(123, 104, 238, 0.3);
+    transition: all 0.2s ease;
+}
+
+#alt-add-task-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(123, 104, 238, 0.4);
+    background-color: #6A5AE0;
+}
+
+#alt-add-task-btn i {
+    font-size: 1rem;
+    margin-right: 6px;
+}
+
+/* Tabela de tarefas */
+.tasks-table-container {
+    background-color: var(--background);
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    flex: 1;
+}
+
+.tasks-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tasks-table th {
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+    background-color: var(--background);
+    color: var(--text-light);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Centralizar cabeçalhos específicos */
+.tasks-table th.col-status,
+.tasks-table th.col-priority {
+    text-align: center;
+}
+
+.tasks-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background-color 0.2s;
+}
+
+.tasks-table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.tasks-table td {
+    padding: 12px 16px;
+    color: var(--text);
+}
+
+/* Centralizar células específicas */
+.tasks-table th.col-status,
+.tasks-table th.col-priority {
+    text-align: center;
+}
+
+.col-check {
+    width: 30px;
+}
+
+.col-actions {
+    width: 80px;
+    text-align: right;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 4px;
+    border-radius: 4px;
+}
+
+.action-btn:hover {
+    background-color: rgba(123, 104, 238, 0.1);
+    color: #7B68EE;
+    transform: scale(1.1);
+}
+
+.empty-state {
+    height: 300px;
+}
+
+.empty-state-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 32px;
+}
+
+.empty-state-content i {
+    font-size: 3rem;
+    color: var(--text-light);
+    opacity: 0.5;
+}
+
+.empty-state-content p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+/* Estilos para o modal de tarefa */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(49, 49, 49, 0.7);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.modal.active {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background-color: var(--background);
+    border-radius: 16px;
+    width: 92%;
+    max-width: 550px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px);
+    transition: transform 0.3s;
+    border: 1px solid rgba(123, 104, 238, 0.1);
+}
+
+.modal.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(123, 104, 238, 0.1);
+    background-color: rgba(123, 104, 238, 0.05);
+    border-radius: 16px 16px 0 0;
+}
+
+.modal-header h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--text-light);
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    transition: all 0.2s;
+}
+
+.close-btn:hover {
+    background-color: rgba(123, 104, 238, 0.1);
+    color: var(--primary);
+}
+
+.modal form {
+    padding: 24px;
+}
+
+/* Estilos para os campos do formulário */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #444;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    font-size: 1rem;
+    transition: all 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.15);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 90px;
+}
+
+/* Estilos para as linhas de formulário */
+.form-row {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+/* Estilo para o botão salvar */
+.form-actions .btn {
+    padding: 11px 22px;
+    font-weight: 500;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 3px 6px rgba(123, 104, 238, 0.2);
+    transition: all 0.2s;
+}
+
+.form-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(123, 104, 238, 0.3);
+}
+
+.form-actions .btn:active {
+    transform: translateY(0);
+}
+
+/* Melhorias para select e date */
+.form-group select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+}
+
+.form-group input[type="date"] {
+    padding-right: 12px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .app-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .sidebar {
+        display: none;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
+
+/* Estilos para tarefas concluídas e atrasadas */
+.task-completed {
+    opacity: 0.7;
+    background-color: rgba(240, 240, 240, 0.5);
+}
+
+.task-completed td {
+    text-decoration: line-through;
+    color: #666;
+}
+
+.task-completed td.col-status,
+.task-completed td span.status-badge,
+.task-completed td span.priority-badge,
+.task-completed td:last-child {
+    text-decoration: none;
+}
+
+.task-overdue {
+    border-left: 3px solid #dc3545;
+}
+
+.date-overdue {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Melhorias na tabela */
+.task-name-cell {
+    cursor: pointer;
+    position: relative;
+}
+
+.task-name-cell:hover {
+    color: #7B68EE;
+    text-decoration: underline;
+}
+
+/* Animações */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+.tasks-table tr.empty-state td {
+    animation: pulse 1.5s infinite;
+}
+
+/* Melhoria nas notificações */
+.notification-container.info {
+    background-color: #17a2b8;
+}
+
+.notification-container.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.empty-state #empty-add-btn {
+    margin-top: 15px;
+}
+
+/* Adicionar hover para linhas da tabela */
+.tasks-table tbody tr:hover {
+    background-color: rgba(123, 104, 238, 0.05);
+}
+
+/* Estilos para botões de ação */
+.action-btn:hover {
+    background-color: rgba(123, 104, 238, 0.1);
+    color: #7B68EE;
+    transform: scale(1.1);
+}
+
+/* Estilos para o botão de adicionar tipo de tarefa */
+.filter-with-button,
+.select-with-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    flex: 1;
+}
+
+.filter-with-button select,
+.select-with-button select {
+    flex: 1;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: var(--primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-icon:hover {
+    background-color: rgba(123, 104, 238, 0.1);
+    transform: scale(1.1);
+}
+
+/* Modal pequeno */
+.modal-sm {
+    max-width: 400px;
+}
+
+/* Estilos para botões */
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #6A5AE0;
+}
+
+.btn-danger {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #ff7875;
+}
+
+/* Melhoria na notificação */
+.notification-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.notification-container.success {
+    background-color: #52c41a;
+}
+
+.notification-container.error {
+    background-color: #ff4d4f;
+}
+
+.notification-container.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Garantir que todos os selects dentro da barra de filtros tenham mesmo tamanho */
+.filters-bar select {
+    width: 100%;
+    height: 36px;
+}
+
+/* Ajustar o container do tipo de tarefa */
+.filter-with-button {
+    flex: 1;
+    max-width: calc(100% - 32px);
+} 

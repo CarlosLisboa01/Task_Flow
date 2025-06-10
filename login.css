@@ -1,0 +1,445 @@
+:root {
+    --primary: #7B68EE;
+    --primary-dark: #6A5ACD;
+    --primary-light: #9370DB;
+    --white: #ffffff;
+    --text-dark: #333333;
+    --text-light: #666666;
+    --background: #f8f9fa;
+    --border: #e0e0e0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+    background-color: var(--background);
+    overflow: hidden;
+}
+
+.slider-container {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    height: 600px;
+    background-color: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.form-side {
+    position: absolute;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    padding: 40px;
+    background-color: var(--white);
+    transition: transform 0.6s ease-in-out;
+    z-index: 2;
+}
+
+.form-content {
+    max-width: 400px;
+    margin: 0 auto;
+    width: 100%;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out, transform 0.6s ease-in-out;
+}
+
+.login-form {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.6s ease-in-out;
+}
+
+.register-form {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 40px;
+    transform: translateX(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.6s ease-in-out;
+}
+
+.slider-container.right-panel-active .login-form {
+    transform: translateX(-100%);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.slider-container.right-panel-active .register-form {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.banner-side {
+    position: absolute;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    text-align: center;
+    transition: transform 0.6s ease-in-out;
+    z-index: 1;
+}
+
+.banner-content {
+    max-width: 400px;
+    position: absolute;
+    width: 100%;
+    padding: 0 40px;
+    transition: transform 0.6s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.login-banner {
+    opacity: 1;
+    transform: translateX(0);
+    visibility: visible;
+    transition: all 0.6s ease-in-out;
+}
+
+.register-banner {
+    opacity: 0;
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: all 0.6s ease-in-out;
+}
+
+.slider-container.right-panel-active .login-banner {
+    transform: translateX(-100%);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.slider-container.right-panel-active .register-banner {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.slider-container.right-panel-active .form-side {
+    transform: translateX(100%);
+}
+
+.slider-container.right-panel-active .banner-side {
+    transform: translateX(-100%);
+}
+
+.form-content h2 {
+    font-size: 2rem;
+    color: var(--text-dark);
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.1);
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-light);
+}
+
+.forgot-password {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.social-login {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.social-login span {
+    display: block;
+    color: var(--text-light);
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.social-login span::before,
+.social-login span::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    height: 1px;
+    background-color: var(--border);
+}
+
+.social-login span::before {
+    left: 0;
+}
+
+.social-login span::after {
+    right: 0;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+}
+
+.social-btn {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background-color: var(--white);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    position: relative;
+    overflow: hidden;
+}
+
+.social-btn.google {
+    color: #DB4437;
+}
+
+.social-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.social-btn.google:hover {
+    border-color: #DB4437;
+    background-color: #fff;
+    color: #DB4437;
+}
+
+.social-btn i {
+    font-size: 1.4rem;
+    transition: transform 0.3s ease;
+}
+
+.social-btn:hover i {
+    transform: scale(1.1);
+}
+
+.social-btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.social-btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.social-btn.loading i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.banner-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-in-out forwards;
+}
+
+.impact-phrase {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-weight: 500;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-in-out 0.2s forwards;
+}
+
+.sub-text {
+    font-size: 1rem;
+    margin-bottom: 30px;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-in-out 0.4s forwards;
+}
+
+.btn-secondary {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: transparent;
+    border: 2px solid var(--white);
+    color: var(--white);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-in-out 0.6s forwards;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background-color: var(--white);
+    color: var(--primary);
+    transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.notification-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 8px;
+    background-color: var(--white);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 1000;
+}
+
+.notification-container.show {
+    display: block;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .slider-container {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .form-side,
+    .banner-side {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    .banner-side {
+        padding: 60px 20px;
+    }
+
+    .form-side {
+        padding: 30px 20px;
+    }
+
+    .login-form,
+    .register-form {
+        position: relative;
+        padding: 0;
+    }
+
+    .slider-container.right-panel-active .form-side,
+    .slider-container.right-panel-active .banner-side,
+    .slider-container.right-panel-active .login-form,
+    .slider-container.right-panel-active .register-form,
+    .slider-container.right-panel-active .login-banner,
+    .slider-container.right-panel-active .register-banner {
+        transform: none;
+    }
+
+    .register-form,
+    .register-banner {
+        display: none;
+    }
+
+    .slider-container.right-panel-active .login-form,
+    .slider-container.right-panel-active .login-banner {
+        display: none;
+    }
+
+    .slider-container.right-panel-active .register-form,
+    .slider-container.right-panel-active .register-banner {
+        display: block;
+        opacity: 1;
+        visibility: visible;
+    }
+} 
